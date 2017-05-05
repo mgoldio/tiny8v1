@@ -36,7 +36,6 @@
 # -------------------------------------------------------------------------- #
 
 
-set_global_assignment -name FAMILY "Stratix III"
 set_global_assignment -name DEVICE EP3SE50F780C2
 set_global_assignment -name FAMILY "Stratix III"
 set_global_assignment -name TOP_LEVEL_ENTITY tiny8v1
@@ -64,6 +63,8 @@ set_global_assignment -name EDA_TEST_BENCH_RUN_SIM_FOR "1000 ns" -section_id tb
 set_global_assignment -name EDA_TEST_BENCH_MODULE_NAME tiny_tb -section_id tb
 set_global_assignment -name EDA_TEST_BENCH_FILE tiny_tb.sv -section_id tb
 set_global_assignment -name EDA_TEST_BENCH_FILE memory.sv -section_id tb
+set_global_assignment -name EDA_NATIVELINK_SIMULATION_SETUP_SCRIPT simulation/modelsim/basic.do -section_id eda_simulation
+set_global_assignment -name SDC_FILE tiny8v1.sdc
 set_global_assignment -name SYSTEMVERILOG_FILE sext.sv
 set_global_assignment -name SYSTEMVERILOG_FILE register.sv
 set_global_assignment -name SYSTEMVERILOG_FILE regfile.sv
@@ -75,5 +76,21 @@ set_global_assignment -name SYSTEMVERILOG_FILE control.sv
 set_global_assignment -name SYSTEMVERILOG_FILE alu.sv
 set_global_assignment -name SYSTEMVERILOG_FILE tiny8v1.sv
 set_global_assignment -name SYSTEMVERILOG_FILE tiny8_types.sv
-set_global_assignment -name EDA_NATIVELINK_SIMULATION_SETUP_SCRIPT simulation/modelsim/basic.do -section_id eda_simulation
+set_global_assignment -name OPTIMIZE_HOLD_TIMING OFF
+set_global_assignment -name OPTIMIZE_MULTI_CORNER_TIMING ON
+set_global_assignment -name OPTIMIZE_POWER_DURING_FITTING OFF
+set_global_assignment -name FITTER_EFFORT "STANDARD FIT"
+set_global_assignment -name STRATIXII_OPTIMIZATION_TECHNIQUE SPEED
+set_global_assignment -name SYNTH_TIMING_DRIVEN_SYNTHESIS ON
+set_global_assignment -name OPTIMIZE_POWER_DURING_SYNTHESIS "NORMAL COMPILATION"
+set_global_assignment -name ROUTER_TIMING_OPTIMIZATION_LEVEL MAXIMUM
+set_global_assignment -name PLACEMENT_EFFORT_MULTIPLIER 2
+set_global_assignment -name ROUTER_EFFORT_MULTIPLIER 2
+set_global_assignment -name PROGRAMMABLE_POWER_TECHNOLOGY_SETTING "FORCE ALL TILES WITH FAILING TIMING PATHS TO HIGH SPEED"
+set_global_assignment -name FINAL_PLACEMENT_OPTIMIZATION ALWAYS
+set_global_assignment -name FITTER_AGGRESSIVE_ROUTABILITY_OPTIMIZATION NEVER
+set_global_assignment -name OPTIMIZE_FOR_METASTABILITY OFF
+set_global_assignment -name ALM_REGISTER_PACKING_EFFORT HIGH
+set_global_assignment -name REMOVE_DUPLICATE_REGISTERS OFF
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top
+set_global_assignment -name SEED 4001
