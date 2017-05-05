@@ -1,6 +1,7 @@
 package tiny8_types;
 
-typedef logic  [7:0] tiny8_word;
+typedef logic [7:0] tiny8_word;
+typedef logic [1:0] tiny8_reg;
 
 typedef enum bit [1:0] {
     op_ads = 2'b00;
