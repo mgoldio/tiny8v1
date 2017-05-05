@@ -1,4 +1,4 @@
-import tiny8_types::;
+import tiny8_types::*;
 
 module memory
 (
@@ -6,7 +6,7 @@ module memory
 
     input read,
     input write,
-    input tiny8_word addr,
+    input tiny8_word address,
     input tiny8_word wdata,
     output logic resp,
     output tiny8_word rdata
@@ -27,13 +27,13 @@ end
 
 always_comb
 begin
-    rdata = mem[addr];
+    rdata = mem[address];
 end
 
 always @(posedge clk)
 begin
     if (write) begin
-        mem[addr] = wdata;
+        mem[address] = wdata;
     end
 end
 

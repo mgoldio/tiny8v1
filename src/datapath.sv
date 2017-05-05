@@ -10,16 +10,20 @@ module datapath
     input load_acc,
     input load_rs,
     input load_rd,
+    input load_mar,
+    input load_mdr,
 
     input tiny8_aluop aluop,
     output logic branch_enable,
+    output tiny8_opcode opcode,
 
     /* mux selects */
     input pcmux_sel,
-    input [1:0] addrmux_sel,
     input alumux1_sel,
     input alumux2_sel,
     input regfilemux_sel,
+    input [1:0] marmux_sel,
+    input mdrmux_sel,
 
     /* memory connections */
     output tiny8_word mem_address,
@@ -38,11 +42,14 @@ tiny8_word addrmux_out;
 tiny8_word alumux1_out;
 tiny8_word alumux2_out;
 tiny8_word regfilemux_out;
-tiny8_opcode opcode;
 tiny8_reg rs;
 tiny8_reg rd;
 logic [1:0] delta2;
 logic [3:0] imm4;
+tiny8_word marmux_out;
+tiny8_word mdrmux_out;
+tiny8_word imm4_sext;
+tiny8_word delta2_sext;
 
 assign branch_enable = (rs_out>0);
 
@@ -99,17 +106,6 @@ mux2 pcmux
     .f(pcmux_out)
 );
 
-
-mux4 addrmux
-(
-    .sel(addrmux_sel),
-    .a(pc_out),
-    .b(rs_out),
-    .c(rd_out),
-    .d(),
-    .f(addrmux_out)
-);
-
 mux2 alumux1
 (
     .sel(alumux1_sel),
@@ -118,11 +114,23 @@ mux2 alumux1
     .f(alumux1_out)
 );
 
+sext #(2) delta2_sext_
+(
+    .in (delta2),
+    .out(delta2_sext)
+);
+
+sext #(4) imm4_sext_
+(
+    .in (imm4),
+    .out(imm4_sext)
+);
+
 mux2 alumux2
 (
     .sel(alumux2_sel),
-    .a($signed(delta2)),
-    .b($signed(imm4)),
+    .a(delta2_sext),
+    .b(imm4_sext),
     .f(alumux2_out)
 );
 
@@ -130,11 +138,11 @@ mux2 regfilemux
 (
     .sel(regfilemux_sel),
     .a(alu_out),
-    .b(mdr_out),
+    .b(mem_wdata),
     .f(regfilemux_out)
 );
 
-ir ir
+ir ir_
 (
     .clk,
     .load(load_ir),
@@ -169,10 +177,8 @@ register mdr
     .clk, 
     .load(load_mdr), 
     .in(mdrmux_out), 
-    .out(mdr_out)
+    .out(mem_wdata)
 );
-
-assign mem_wdata = mdr_out;
 
 mux2 mdrmux 
 (

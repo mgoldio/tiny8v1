@@ -15,18 +15,18 @@ module control
     output logic load_mdr,
 
     output logic pcmux_sel,
-    output logic [1:0] alumux1_sel,
+    output logic regfilemux_sel,
+    output logic alumux1_sel,
     output logic alumux2_sel,
-    output logic [1:0] addrmux_sel,
-    output logic marmux_sel,
+    output logic [1:0] marmux_sel,
     output logic mdrmux_sel,
 
     output tiny8_aluop aluop,
 
     /* mem signals */
     input mem_resp,
-    output mem_read,
-    output mem_write
+    output logic mem_read,
+    output logic mem_write
 );
 
 typedef enum int unsigned {
@@ -61,9 +61,14 @@ begin : state_actions
     load_mdr = 0;
     load_mar = 0;
     pcmux_sel = 0;
+    regfilemux_sel = 0;
     alumux1_sel = 0;
     alumux2_sel = 0;
-    addrmux_sel = 0;
+    marmux_sel = 0;
+    mdrmux_sel = 0;
+    aluop = alu_add;
+    mem_read = 0;
+    mem_write = 0;
 
     case(state)
 
@@ -94,7 +99,7 @@ begin : state_actions
 
         ST_ADS : begin
             load_acc = 1;
-            alu_op = alu_mul;
+            aluop = alu_mul;
             alumux2_sel = 1;
         end
 
@@ -119,7 +124,7 @@ begin : state_actions
             regfilemux_sel = 1;
             load_rs = 1;
             load_rd = 1;
-            alu_op = alu_sub;
+            aluop = alu_sub;
             alumux1_sel = 1;
         end
 
@@ -130,13 +135,15 @@ begin : state_actions
         ST_STP_2 : begin
             load_mdr = 1;
             load_rs = 1;
-            alu_op = alu_sub;
+            aluop = alu_sub;
             alumux1_sel = 1;
         end
 
         ST_STP_3 : begin
             mem_write = 1;
         end
+
+        default: ;
 
     endcase // state
 end
@@ -196,6 +203,8 @@ begin : next_state_logic
             if(mem_resp==0)
                 next_state = ST_STP_3;
         end
+
+        default: ;
 
     endcase
 end
