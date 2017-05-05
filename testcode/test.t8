@@ -1,0 +1,8 @@
+# a bit of sample code
+# the assembler does not yet support labels
+
+
+ADS r0, 4
+BPD r3, 5
+LDP r2, r3, 0
+STP r2, 1

@@ -1,0 +1,234 @@
+#!/usr/bin/env python3
+
+# TODO
+# support for labels
+# 
+import argparse, sys
+from enum import Enum
+
+register_dict = {	
+					"r0" : "00",
+					"r1" : "01",
+					"r2" : "10",
+					"r3" : "11"
+				}
+opcodes_dict  = {	
+					"ADS" : "00",
+					"BPD" : "01",
+					"LDP" : "10",
+					"STP" : "11"
+				}
+imm4_dict     = {	
+					-8 : "1000",
+					-7 : "1001",
+					-6 : "1010",
+					-5 : "1011",
+					-4 : "1100",
+					-3 : "1101",
+					-2 : "1110",
+					-1 : "1111",
+					 0 : "0000",
+					 1 : "0001",
+					 2 : "0010",
+					 3 : "0011",
+					 4 : "0100",
+					 5 : "0101",
+					 6 : "0110",
+					 7 : "0111"
+				}
+delta2_dict   = {	
+					-2 : "10",
+					-1 : "11",
+					 0 : "00",
+					 1 : "01",
+				}
+
+
+
+def main(args):
+	return compile(args.input_file, args.output_file, int(args.addressability))
+
+
+
+def compile(input, output_file, addressability):
+
+	try:
+		f_out = open(output_file, 'w')
+		f_out.close();
+		f_in = open(input, 'r')
+	except:
+		throw_error(err.FILE_ERROR)
+
+	output = ""
+
+	# read a line
+	line = f_in.readline()
+	line = line.replace(",", " ")
+	line_count = 1
+	addressability_counter = 1
+
+	# check if the line is blank
+	while line != "":
+		# split by the spaces in the instruction line
+		instr_div = line.split()
+		# print(line)
+		# print(instr_div)
+		if len(instr_div)!=0:
+			instr_div[0] = instr_div[0].upper()
+
+			if instr_div[0]==";" or instr_div[0]=="#" or instr_div[0]=="//":
+				pass
+
+			elif instr_div[0] in opcodes_dict:
+				# it's an instruction!
+
+				# opcode
+				try:
+					compiled_line = opcodes_dict[instr_div[0]]
+				except:
+					return throw_error(err.INVALID_INSTRUCTION,instr_div[0],line_count)
+				
+
+				# register
+				try:
+					compiled_line += register_dict[instr_div[1].lower()]
+				except:
+					throw_error(err.INVALID_REGISTER,instr_div[1],line_count)
+					return -1;
+
+
+				# special for LDP
+				if instr_div[0]=="LDP":
+					try:
+						compiled_line += register_dict[instr_div[2].lower()]
+					except:
+						return throw_error(err.INVALID_REGISTER,instr_div[2],line_count)
+
+
+				# special for STP
+				if instr_div[0]=="STP":
+					compiled_line += "00"
+
+
+				# imm4/offset4
+				if instr_div[0]=="ADS" or instr_div[0]=="BPD":
+					try:
+						compiled_line += getImm4(instr_div[2])
+					except:
+						return throw_error(err.INVALID_IMM4,instr_div[2],line_count)
+			
+
+				# delta2
+				if instr_div[0]=="LDP" or instr_div[0]=="STP":
+					delta2 = instr_div[3] if instr_div[0]=="LDP" else instr_div[2]
+					try:
+						compiled_line += getDelta2(delta2)
+					except:
+						return throw_error(err.INVALID_DELTA2,delta2,line_count)
+			
+
+				# check for an unknown error
+				if len(compiled_line)!=8:
+					return throw_error(err.UNKNOWN)
+
+
+				# go to the next line
+				output += (line2hex(compiled_line))
+				# should we end the line?
+				if addressability_counter%addressability==0:
+					output +=  "\n"
+
+				addressability_counter += 1
+
+
+		# read the next line
+		line = f_in.readline()
+		line = line.replace(",", " ")
+		line_count += 1
+
+
+	try:
+		f_out = open(output_file, 'w')
+	except:
+		throw_error(err.FILE_ERROR)
+
+	# write the beginning of the memory file
+	f_out.write("@0000000000000000")
+	f_out.write("\n")
+	f_out.write(output)
+
+
+	# close the files
+	f_in.close()
+	f_out.close()
+
+	print ("Compilation succeeded!")
+
+
+
+def throw_error(type,msg,line_count):
+	if type==err.INVALID_INSTRUCTION:
+		print( "Invalid instruction '"+msg+"' found on line "+str(line_count)+".")
+
+	if type==err.INVALID_REGISTER:
+		print( "Invalid instruction '"+msg+"' found on line "+str(line_count)+".")
+
+	if type==err.INVALID_IMM4:
+		print( "Invalid imm4/offset4 '"+msg+"' found on line "+str(line_count)+".")
+
+	if type==err.INVALID_DELTA2:
+		print( "Invalid delta2 '"+msg+"' found on line "+str(line_count)+".")
+
+	if type==err.UNKNOWN:
+		print( "An unknown error occured.")
+
+	if type==err.FILE_ERROR:
+		print( "A file error occurred.")
+
+	print( "Compilation failed!")
+
+	return -1
+
+
+class err(Enum):
+	INVALID_INSTRUCTION = 0
+	INVALID_REGISTER = 1
+	INVALID_IMM4 = 2
+	INVALID_DELTA2 = 3
+	UNKNOWN = 4
+	FILE_ERROR = 5
+
+
+def getImm4(number):
+	return imm4_dict[int(number)]
+
+
+def getDelta2(number):
+	return delta2_dict[int(number)]
+
+def line2hex(line):
+	return (str(hex(int(line,2)))[2:]).zfill(2).upper()
+
+
+# parse the args from the user
+# returns parsed args in an array
+def getArgs():
+
+	parser = argparse.ArgumentParser(description="creates a memory file for the input file in the tiny8 architecture")
+	parser.add_argument('-i','--input_file', action='store', help='the input file with tiny8 code')
+	parser.add_argument('-o','--output_file', action='store', help='path to store the output memory file')
+	parser.add_argument('-a','--addressability', action='store', help='how many bytes wide will accesses to memory be?', default=1)
+
+	# pass them back to the main function
+	return parser.parse_args()
+
+
+# run our main function
+if __name__ == "__main__":
+	# get the cmd line args
+	args = getArgs()
+
+	main(args)
+		
+
+
