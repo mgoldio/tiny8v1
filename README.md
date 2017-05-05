@@ -16,9 +16,9 @@ It features:
   * 8-bit word size
   * 8-bit address space and byte-addressability
 
-### Operations
+### Instructions
 
-The ISA boasts a Turing-complete set of four operations.
+The ISA boasts a Turing-complete set of four instructions.
 
 #### ADS - Add Scale
 ```
