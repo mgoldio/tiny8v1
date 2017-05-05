@@ -18,7 +18,12 @@ module datapath
     input [1:0] addrmux_sel,
     input alumux1_sel,
     input alumux2_sel,
-    input regfilemux_sel
+    input regfilemux_sel,
+
+    /* mem signals */
+    output tiny8_word mem_addr,
+    output tiny8_word mem_wdata,
+    input tiny8_word mem_rdata
 );
 
 tiny8_word pc_out;
