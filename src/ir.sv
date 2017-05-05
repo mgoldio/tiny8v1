@@ -20,7 +20,7 @@ begin
         data = in;
 end
 
-assign opcode tiny8_opcode'(data[7:6]);
+assign opcode = tiny8_opcode'(data[7:6]);
 assign rs = data[5:4];
 assign rd = data[3:2];
 assign delta2 = data[1:0];

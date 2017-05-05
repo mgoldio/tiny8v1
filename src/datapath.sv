@@ -131,7 +131,7 @@ mux2 regfilemux
     .f(regfilemux_out)
 );
 
-ir ir
+ir instr
 (
     .clk,
     .load(load_ir),

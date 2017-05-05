@@ -11,7 +11,7 @@ module control
     output logic load_ir,
 
     output logic pcmux_sel,
-    output logic [1:0] alumux1_sel,
+    output logic alumux1_sel,
     output logic alumux2_sel,
     output logic [1:0] addrmux_sel,
 
