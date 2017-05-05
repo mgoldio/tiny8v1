@@ -17,6 +17,9 @@ begin
         alu_sub : begin
             f = a - b;
         end
+        alu_dec : begin
+            f = a - 1;
+        end
         alu_mul : begin
         /* since we know this is only 4 bits, we simply shift and add to avoid
          * multiplication */

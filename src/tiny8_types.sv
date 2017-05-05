@@ -9,3 +9,12 @@ typedef enum bit [1:0] {
     op_ldp = 2'b10;
     op_stp = 2'b11;
 } tiny8_opcode;
+
+typedef enum bit [1:0] {
+    alu_add,
+    alu_sub,
+    alu_dec,
+    alu_mul
+} tiny8_aluop;
+
+endpackage : lc3b_types
