@@ -9,7 +9,8 @@ We have a simple CPU in SystemVerilog that meets the ISA specifications.
 
 ### Overview
 
-The Tiny8v1 ISA is "focused on ultra low-cost systems." It boasts
+The Tiny8v1 ISA is "focused on ultra low-cost systems." 
+It features:
   * 4 general purpose registers (r0, r1, r2, r3)
   * 1 accumulator register (acc)
   * 8-bit word size
