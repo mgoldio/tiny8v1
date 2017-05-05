@@ -7,7 +7,8 @@ module control
 
     output logic load_pc,
     output logic load_acc,
-    output logic load_regfile,
+    output logic load_rs,
+    output logic load_rd,
     output logic load_ir,
 
     output logic pcmux_sel,
@@ -52,6 +53,7 @@ begin : next_state_logic
         end
         ST_MEMORY : begin
         end
+    endcase
 end
 
 endmodule

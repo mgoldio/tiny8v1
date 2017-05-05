@@ -27,14 +27,14 @@ end
 always_ff @(posedge clk)
 begin
     if (load1 == 1'b1) begin
-        data[r1] = in;
+        data[r1] = in1;
     end
 end
 
 always_ff @(posedge clk)
 begin
     if (load2 == 1'b1) begin
-        data[r2] = in;
+        data[r2] = in2;
     end
 end
 

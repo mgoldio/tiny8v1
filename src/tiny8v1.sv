@@ -21,7 +21,9 @@ logic lcmux_sel;
 logic [1:0] addrmux_sel;
 logic alumux1_sel;
 logic alumux2_sel;
+logic pcmux_sel;
 logic regfilemux_sel;
+tiny8_opcode opcode;
 
 control control (.*);
 datapath datapath (.*);

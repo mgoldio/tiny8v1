@@ -20,6 +20,9 @@ module datapath
     input alumux2_sel,
     input regfilemux_sel,
 
+    /* outputs */
+    output tiny8_opcode opcode,
+
     /* mem signals */
     output tiny8_word mem_addr,
     output tiny8_word mem_wdata,
@@ -37,7 +40,6 @@ tiny8_word addrmux_out;
 tiny8_word alumux1_out;
 tiny8_word alumux2_out;
 tiny8_word regfilemux_out;
-tiny8_opcode opcode;
 tiny8_reg rs;
 tiny8_reg rd;
 logic [1:0] delta2;

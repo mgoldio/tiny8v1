@@ -10,4 +10,11 @@ typedef enum bit [1:0] {
     op_stp = 2'b11
 } tiny8_opcode;
 
+typedef enum bit [1:0] {
+    alu_add = 2'b00,
+    alu_sub = 2'b01,
+    alu_mul = 2'b10,
+    alu_pas = 2'b11
+} tiny8_aluop;
+
 endpackage
